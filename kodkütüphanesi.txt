@@ -1,0 +1,540 @@
+--katalog adlı proje oluışturmak icin kod--
+django-admin startproject catalog
+
+--pages adında bi uygulama yapmak icin ilk adım oluşturma--
+python manage.py startapp pages
+
+---INSTALLED_APPS = [
+    'pages.apps.PagesConfig'  ana settings.py dosyasına ekledimiz projenin ana apps kalsorünü eklmeiş olduk
+--
+
+
+
+--
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index,name="index"),
+]
+--
+views icinden index metodu urls.py dosyasına eklneyior
+
+
+--ana urls.py de eklenir
+
+urlpatterns = [
+    path('',include('pages.urls')),
+---
+
+
+---
+'DIRS': [os.path.join(BASE_DIR,'template')],
+catolog settingine eklnene tempalte klasörünün yolunu projeye tanıtmak
+---
+
+
+----
+def index(request):
+    return render(request,'pages/index.html') 
+
+def abaout(request):
+    return render(request,'pages/about.html
+
+views icine bu methodlar eklneir template zaten tanıtıldıgı icin yol pages altındaki index.htmlş yada about heml gibi iki tane foknsiyon a html ler rbverilir.
+---
+--
+bundan sonra ise htmllerin ici doldurulurak tekrar yapılır
+
+
+---
+% block content%}
+
+   {% endblock %}
+layout.htm eklenir ve değişecek alanlar block contentler belirtlir
+geri kalanlar ise extends "layout.html" ile geri kaln yerler alınır değişecek alanlar ise sadec 
+% block content%}
+
+   {% endbloc 
+su sekilde ebelirtlir
+----
+
+
+-
+static ler
+sttaic dosyası icinde css altında style.css
+alındı
+{%load static%}
+
+<link rel ="stylesheet"  href ="{% static 'css/style.css' %}">
+
+layout.htmle bu satırlar eklenir ve 
+style.css uygulanması sağlanır
+
+static ana root kklasorüne alınırsa yerini belitrilmesi icin
+
+settings dosyasına 
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+  
+]
+
+eklenir
+
+----
+
+
+
+---
+bootstrap ile ekkeme bolum 6
+gerekli  css js dosyaları ve resimler static dosyasına atıldı
+
+ <link rel ="stylesheet"  href ="{% static 'css/bootstrap.min.css' %}">
+    <link rel ="stylesheet"  href ="{% static 'css/style.css' %}">
+bu bootstrap css ler eklenir
+
+-----
+ navbar eklme kodu
+Movie App ve products yazıyo
+
+
+ <header>
+    <div class="navbar navbar-expand-sm bg-primary navbar-dark">
+      <div class="container">
+       <a href="/" class="navbar-brand">Movie App</a>
+       <ul class="navbar-nav mr-auto">
+         <li class="nav-item">
+             <a href="#" class="nav-link">Products</a>
+         </li>
+         </ul>
+      </div>
+    </div>
+   </header>
+
+yazıyı oratalma
+  <div class="container mt-4">
+  </div>
+
+footer
+
+<footer>
+   <div class="footer py-3 mt-3">
+    <div class="container"> hizala
+   <span class="text-muted"> //icerik soluk
+       Movie Application
+   </span>
+    </div>
+   </div>
+  </footer>
+
+
+
+---------
+
+partials icine 
+_navbar.html
+ve _footer.html eklenir
+ana layout.htmlde ise e
+ {% include 'partials/_footer.html' %}
+
+larla istenilen yere eklneir
+
+
+---
+
+<div class="row">
+<div class="col-md-12">
+    <div class="card mb-3">
+        <div class="row">
+            <div class="col-md-3">
+               <img class="card-img" src="{% static 'img/1.jpg'%}" alt="">
+            </div>
+            <div class="col-md-9">
+                <div class="card-body">
+                    <div class="card-title">High Life</div>//film ismi
+                    <p class="card-text">
+                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ratione, culpa. //acıklama kısmı
+
+                    </p>
+                    <p class="card-text">
+                      <small class="text-muted">3 days ago</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+</div>
+
+
+film ekleme 
+yanına acıklalmalı
+
+---
+linkler verildi movie about-index falan
+
+--
+--
+ eyer gelen istek index se class aktif deilse  klass actif deil
+
+  {% if request.path== '/' %}   yukarda linklerde home yazan yerin aktif olması yada about yazan yerin aktif olması
+
+              class="nav-item activate"
+         {% else %}
+              class="nav-item"
+         {% endif %}
+şöle kullnaırsa
+  <li 
+         {% if 'about' in request.path %}
+           class="nav-item active"
+         {% else %}
+            class="nav-item"
+         {% endif %}
+         >
+          <a href="{% url 'about' %}" class="nav-link">About</a>
+      </li>
+
+about isteğin icindeyse demektir
+-----
+
+--
+python manage.py startapp movies
+movies klasorüğ oluşturuldu
+settine installedappse movies eklenir
+
+catolog.urls.py ye  path('movies/',include('movies.urls')),
+
+eklenir
+
+---
+
+movies urls.py iicne
+
+urlpatterns = [
+    path('', views.index,name= 'movies'),   -- index sayfası
+    path('<int:movie_id>', views.detail,name='detail'),  ---localhoıstmovies/2   ardına gelen id integer tipinde
+    path('search', views.search,name='search'), --search kısmı
+
+]
+----
+htmller templatede movies/altıona oluşturulur
+movies list.html e   index sayfasına eklneenler aynen alınır 
+---
+--
+ python manage.py migrate
+yapılarak databese aktarılır
+
+--
+admin paneli actık
+databse username şifre ekliyoz
+
+
+-  python manage.py cretaesuperuser
+yetkili admin oluşturulur
+
+---
+model oluşturma
+model denişlen şey databsede tablo oluşturmaya yarar
+movies/models.py de işlmele reryapılır
+from django.db import models
+
+
+class  Movie(models.Model):
+    name=models.CharField(max_length=100)
+    description=models.TextField()
+    image=models.CharField(max_length=50)
+    created_date=models.DateTimeField(auto_now_add=True)
+
+icine bole bi model yapıldı
+
+
+admin.py de 
+admin.site.register(Movie)
+
+ekleme yapıldı
+
+pyhton manage.py makemigrations
+ile tablo üretilir
+
+tekrar manage.py migrate denildiğinde databse gider
+
+---
+
+models.py de eyer 
+Movie clasına 
+def __str__(self):
+        return self.name
+
+eklenirse film isimleriyle gelir
+
+name=models.CharField(max_length=100,verbose_name='Film Adı')
+verbose_name eklenerek  istenilen görütüleme elde edilir 
+
+---
+admin.py de 
+class  MovieAdmin(admin.ModelAdmin):
+    list_display=('id','name','created_date') //ozelleştirme
+    list_display_links=('id','name')//link verme (21)
+admin.site.register(Movie,MovieAdmin)
+
+--
+  context= {
+        'name': 'Mustafa varol'
+
+    }
+    return render(request,'movies/list.html',context) 
+bu sekilde ekstra bir parametreyle gonderibilir<
+bunu list.htmlde  {{name}} seklinde ealabilirz
+
+demmekki veritabnbından bilgileri bu şeklde alabilirz
+
+---
+
+moviesten bütün bilgileri alır 
+movie tablosundan
+
+movies = Movie.objects.all()
+    context= {
+        'movies': movies
+
+    }
+    return render(request,'movies/list.html',movies) 
+
+
+----
+  {% if movies %}
+        {% for movie in movies %}
+             <div class="card mb-3">
+            <div class="row">
+                <div class="col-md-3">
+                   <img class="card-img" src="{% static 'img/3.jpg'%}" alt="">
+                </div>
+                <div class="col-md-9">
+                    <div class="card-body">
+                        <div class="card-title">{{movie.name}}</div>
+                        <p class="card-text">
+                            {{movie.description}}
+                        </p>
+                        <p class="card-text">
+                          <small class="text-muted">{{movie.cretated_date}}</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+             </div>
+        {% endfor %}
+
+
+    {% else %}
+       <div class="alert-warning">  --yoksa uyraı verir
+           <p>
+               No Movies
+           </p>
+       </div>
+    {% endif %}
+bolece bütün filmleri almış olur databesede movie tablosunda bulunanları alır
+
+--
+def get_image_path(self):
+        return '/img/' +self.image
+
+models de movie ye def eklenrek  img pathe ek olrak resim ismi donermesi sağlanır
+
+ <img class="card-img" src="{% static movie.get_image_path %} -- direk eklneir lsit.html e
+
+sttaiccte direk alır yollarını 
+
+
+
+--
+ <a href="{% url 'detail' movie.id %">  {{movie.name}} </a>  
+ film isimlerine url eklme detailden id le yolmak icin
+
+def detail(request,movie_id):
+    return render(request,'movies/detail.html')
+
+views da methoda id eklenir
+
+
+
+---
+def detail(request,movie_id):
+    movie =get_object_or_404(Movie,pk=movie_id)
+    context ={
+     "movie" : movie
+    }
+    return render(request,'movies/detail.html',context)
+varsa sayfaya gide ryoksa
+eroor verir
+--
+detail sayfasın agerkli resimler rflan veirlir
+detail sayfası son.png
+
+--
+
+login ve register ekleme yeri
+
+--
+registere eklme formu eklme
+
+<div class="row">
+   <div class="col-md-6 mx-auto">
+       <div class="card">
+           <div class="card-header bg-primary text-white">
+            <h4>Register</h4>
+           </div>
+        <div class="card-body">
+    <form action="">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="password">password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="repassword">Re-password</label>
+            <input type="password" name="repassword" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+    </form>
+
+        </div>
+       </div>
+   </div>
+
+ </div>
+
+---
+
+
+   <form action="{% url 'login' %}" method="POST">
+                        {% csrf_token %}
+
+formpost olacak ve veri güvenliği icin csrf dogrulması
+
+---
+
+register da form yüklmeek icin postlarla yerleri al ve doğrulama yapma
+
+username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        repassword = request.POST['repassword']
+
+        if password == repassword:
+            # Username
+
+
+
+
+
+
+
+
+
+--
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
